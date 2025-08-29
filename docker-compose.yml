@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  bot:
+    image: node:18
+    container_name: amul-bot
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: sh -c "npm install && npm run build && npm start"
+    environment:
+      - BOT_TOKEN=8413445712:AAFkjzk_QRjiJLDOcnALEuhUktgGl3WoPLA
+      - MONGO_URI=mongodb://mongo:27017/amul
+      - REDIS_URL=redis://redis:6379
+      - PORT=3000
+    depends_on:
+      - mongo
+      - redis
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+
+  mongo:
+    image: mongo:6
+    container_name: amul-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7
+    container_name: amul-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongo_data:
+  redis_data:
